@@ -1,0 +1,8 @@
+{
+  "name": "Unit Price Calculator",
+  "description": "A unit price calculator app using Node.js and Express 4",
+  "repository": "https://github.com/thawkin3/unit-price-calculator.git",
+  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
+  "keywords": ["node", "express", "heroku", "calculator"],
+  "image": "heroku/nodejs"
+}
