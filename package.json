@@ -10,13 +10,9 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "ejs": "^2.5.6",
     "express": "^4.15.2"
   },
-  "devDependencies": {
-    "request": "^2.81.0",
-    "tape": "^4.7.0"
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/thawkin3/unit-price-calculator.git"

@@ -1,6 +1,6 @@
-# node-js-getting-started
+# unit-price-calculator
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+A unit price calculator app using Node.js and [Express 4](http://expressjs.com/).
 
 This application supports the [Getting Started on Heroku with Node.js](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
@@ -9,8 +9,8 @@ This application supports the [Getting Started on Heroku with Node.js](https://d
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
 
 ```sh
-$ git clone https://github.com/heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone https://github.com/thawkin3/unit-price-calculator # or clone your own fork
+$ cd unit-price-calculator
 $ npm install
 $ npm start
 ```
