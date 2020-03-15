@@ -1,15 +1,13 @@
 (function(){
-  console.log('hello world!')
-
   // Global state for our unit price calculator app
   const appState = {
     prices: [],
-    unitOfMeasurementPreference: null,
+    doesPreferKilograms: null,
   }
 
   // Use Promise.allSettled to fetch data from two API endpoints
   // and then populate the product dropdown once both endpoints have responded
-  const fetchInitialData = () => {
+  const fetchInitialProductData = () => {
     const fetchProductsPromise = fetch('/api/products')
       .then(response => response.json())
 
@@ -43,6 +41,42 @@
     appState.prices = prices
   }
 
-  // Fetch some data when the page loads
-  fetchInitialData()
+  const fetchUnitOfMeasurementPreference = () => {
+    // Use the globalThis object to get the window
+    // Use optional chaining to get the value out of localStorage if possible
+    const doesPreferKilograms = globalThis.localStorage?.getItem?.('prefersKg')
+    
+    // Use nullish coalescing to either use the preference or default to true
+    appState.doesPreferKilograms = JSON.parse(doesPreferKilograms ?? 'true')
+
+    const kgOption = document.querySelector('#kg')
+    const lbsOption = document.querySelector('#lbs')
+
+    if (appState.doesPreferKilograms) {
+      lbsOption.selected = false
+      kgOption.selected = true
+    } else {
+      kgOption.selected = false
+      lbsOption.selected = true
+    }
+
+    const unitOfMeasurementDropdown = document.querySelector('#unit')
+    unitOfMeasurementDropdown.addEventListener('change', handleUnitChange)
+  }
+
+  const handleUnitChange = e => {
+    const selectedValue = e.target.value
+    const prefersKg = selectedValue === 'kg'
+    // Use the globalThis object to get the window
+    // Use optional chaining to set the value in localStorage if possible
+    globalThis.localStorage?.setItem?.('prefersKg', prefersKg)
+  }
+
+  const init = () => {
+    fetchInitialProductData()
+    fetchUnitOfMeasurementPreference()
+  }
+
+  // Kick things off when the page loads
+  init()
 })()
