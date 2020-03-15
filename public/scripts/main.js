@@ -69,7 +69,6 @@
       weightAndPriceDropdown.innerHTML =
         '<option disabled selected value="">Please select after choosing a product and unit of measurement</option>'
     }
-    
   }
 
   const handleFormSubmit = e => {
