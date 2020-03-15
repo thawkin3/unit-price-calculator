@@ -51,6 +51,8 @@
   const populateWeightAndPriceDropdown = (prices, doesPreferKilograms) => {
     const selectedSku = Number(document.querySelector('#product').value)
     const skuPriceOptions = prices.find(product => product.sku === selectedSku)
+    
+    // Use optional chaining to handle possible undefined sku
     const weightAndPriceOptions = skuPriceOptions?.priceOptions[doesPreferKilograms ? 'kg' : 'lbs']
     
     const weightAndPriceDropdown = document.querySelector('#weight-and-price')
@@ -72,7 +74,10 @@
 
   const handleFormSubmit = e => {
     e.preventDefault()
+    const resultsContainer = document.querySelector('#results-container')
+
     // Dynamic import for the calculate.js module
+    // so that the code is lazy-loaded when the submit button is clicked
     import('./calculate.js')
       .then(module => {
         const selectedProductSku = Number(document.querySelector('#product').value)
@@ -80,9 +85,12 @@
         const selectedProductName = (selectedProduct || {}).name
         const selectedWeightAndPrice = document.querySelector('#weight-and-price').value
         
-        module.calculateUnitPrice(selectedProductName, selectedWeightAndPrice)
+        const unitPriceResult = module.calculateUnitPrice(selectedProductName, selectedWeightAndPrice)
+        resultsContainer.insertAdjacentHTML('afterbegin', `<div class="alert alert-success" role="alert">${unitPriceResult}</div>`)
       })
-      .catch(err => console.log('error calculating unit price:', err))
+      .catch(err => {
+        resultsContainer.insertAdjacentHTML('afterbegin', `<div class="alert alert-danger" role="alert">Please make selections for all three form fields.</div>`)
+      })
   }
 
   // Use Promise.allSettled to fetch data from two API endpoints
@@ -96,7 +104,7 @@
 
     Promise.allSettled([fetchProductsPromise, fetchPricesPromise])
       .then(data => {
-        console.log('all settled! here are the results:', data)
+        // Use optional chaining to handle possible missing data from API
         if (data?.[0]?.status === 'fulfilled' && data?.[0]?.status === 'fulfilled') {
           const products = data[0].value?.products
           const prices = data[1].value?.prices
@@ -106,7 +114,10 @@
         }
         throw new Error('Missing product or price data')
       })
-      .catch(err => console.log('oh no, error! reason:', err))
+      .catch(err => {
+        const resultsContainer = document.querySelector('#results-container')
+        resultsContainer.insertAdjacentHTML('afterbegin', `<div class="alert alert-danger" role="alert">Oh no! Error fetching product data. Please try again later.</div>`)
+      })
   }
 
   const populateProductDropdown = (products = []) => {
