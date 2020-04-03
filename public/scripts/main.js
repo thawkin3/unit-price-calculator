@@ -101,10 +101,10 @@
     const fetchPricesPromise = fetch('/api/prices')
       .then(response => response.json())
 
-    const fetchProductDescriptions = fetch('/api/descriptions')
+    const fetchDescriptionsPromise = fetch('/api/descriptions')
       .then(response => response.json())
 
-    Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchProductDescriptions])
+    Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchDescriptionsPromise])
       .then(data => {
         // Use optional chaining to handle possible missing data from API
         if (data?.[0]?.status === 'fulfilled' && data?.[1]?.status === 'fulfilled') {
