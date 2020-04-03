@@ -106,7 +106,6 @@
 
     Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchProductDescriptions])
       .then(data => {
-        console.log(data)
         // Use optional chaining to handle possible missing data from API
         if (data?.[0]?.status === 'fulfilled' && data?.[1]?.status === 'fulfilled') {
           const products = data[0].value?.products
@@ -137,7 +136,6 @@
     appState.products = products
     appState.prices = prices
     appState.descriptions = descriptions
-    console.log(appState)
   }
 
   const init = () => {
