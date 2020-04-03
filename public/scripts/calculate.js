@@ -11,7 +11,9 @@ export const calculateUnitPrice = (productName, weightAndPrice) => {
   const weight = BigInt(matchResults[1][0])
   const unit = matchResults[2][0]
 
-  const unitPrice = (Number(priceInPennies / weight) / 100).toFixed(2)
+  const unitPriceInPennies = Number(priceInPennies / weight)
+  const unitPriceInDollars = unitPriceInPennies / 100
+  const unitPriceFormatted = unitPriceInDollars.toFixed(2)
 
-  return `The unit price for ${weight} ${unit} of ${productName.toLowerCase()}s for $${price} is <b>$${unitPrice} per ${unit}</b>`
+  return `The unit price for ${weight} ${unit} of ${productName.toLowerCase()}s for $${price} is <b>$${unitPriceFormatted} per ${unit}</b>`
 }

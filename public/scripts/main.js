@@ -94,21 +94,26 @@
 
   // Use Promise.allSettled to fetch data from two API endpoints
   // and then populate the product dropdown once both endpoints have responded
-  const fetchInitialProductData = (doesPreferKilograms) => {
+  const fetchInitialProductData = () => {
     const fetchProductsPromise = fetch('/api/products')
       .then(response => response.json())
 
     const fetchPricesPromise = fetch('/api/prices')
       .then(response => response.json())
 
-    Promise.allSettled([fetchProductsPromise, fetchPricesPromise])
+    const fetchProductDescriptions = fetch('/api/descriptions')
+      .then(response => response.json())
+
+    Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchProductDescriptions])
       .then(data => {
+        console.log(data)
         // Use optional chaining to handle possible missing data from API
-        if (data?.[0]?.status === 'fulfilled' && data?.[0]?.status === 'fulfilled') {
+        if (data?.[0]?.status === 'fulfilled' && data?.[1]?.status === 'fulfilled') {
           const products = data[0].value?.products
           const prices = data[1].value?.prices
-          populateProductDropdown(products)
-          saveDataToAppState(products, prices)
+          const descriptions = data[2].value?.descriptions
+          populateProductDropdown(products, descriptions)
+          saveDataToAppState(products, prices, descriptions)
           return
         }
         throw new Error('Missing product or price data')
@@ -119,23 +124,26 @@
       })
   }
 
-  const populateProductDropdown = (products = []) => {
+  const populateProductDropdown = (products = [], descriptions = []) => {
     const productDropdown = document.querySelector('#product')
-    const productDropdownOptions = products.map((product) =>
-      `<option value="${product.sku}">${product.name}</option>`
-    )
+    const productDropdownOptions = products.map((product, index) => {
+      const descriptionMarkup = descriptions?.[index]?.description ? ` (${descriptions[index].description})` : ''
+      return `<option value="${product.sku}">${product.name}${descriptionMarkup}</option>`
+    })
     productDropdown.insertAdjacentHTML('beforeend', productDropdownOptions.join(''))
   }
 
-  const saveDataToAppState = (products = [], prices = []) => {
+  const saveDataToAppState = (products = [], prices = [], descriptions = []) => {
     appState.products = products
     appState.prices = prices
+    appState.descriptions = descriptions
+    console.log(appState)
   }
 
   const init = () => {
     fetchUnitOfMeasurementPreference()
     addEventListeners()
-    fetchInitialProductData(appState.doesPreferKilograms)
+    fetchInitialProductData()
   }
 
   // Kick things off when the page loads

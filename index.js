@@ -16,6 +16,23 @@ express()
       ]
     })
   })
+  .get('/api/descriptions', (req, res) => {
+    // This will fake an API failure for the purpose of illustrating `Promise.allSettled()`
+    // Half the time this will succeed and half the time this will fail
+    const shouldFail = Math.random() > 0.5
+    const jsonOutput = {
+      descriptions: [
+        { sku: 100, description: 'comes in various sizes' },
+        { sku: 101, description: 'currently on backorder' },
+        { sku: 102, description: 'available in pink and blue' },
+      ]
+    }
+    if (shouldFail) {
+      res.sendStatus(500)
+    } else {
+      res.json(jsonOutput)
+    }
+  })
   .get('/api/prices', (req, res) => {
     res.json({
       prices: [
