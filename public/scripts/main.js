@@ -94,33 +94,26 @@
 
   // Use Promise.allSettled to fetch data from two API endpoints
   // and then populate the product dropdown once both endpoints have responded
-  const fetchInitialProductData = () => {
-    const fetchProductsPromise = fetch('/api/products')
-      .then(response => response.json())
+  const fetchInitialProductData = async () => {
+    const fetchProductsPromise = (await fetch('/api/products')).json()
+    const fetchPricesPromise = (await fetch('/api/prices')).json()
+    const fetchDescriptionsPromise = (await fetch('/api/descriptions')).json()
 
-    const fetchPricesPromise = fetch('/api/prices')
-      .then(response => response.json())
-
-    const fetchDescriptionsPromise = fetch('/api/descriptions')
-      .then(response => response.json())
-
-    Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchDescriptionsPromise])
-      .then(data => {
-        // Use optional chaining to handle possible missing data from API
-        if (data?.[0]?.status === 'fulfilled' && data?.[1]?.status === 'fulfilled') {
-          const products = data[0].value?.products
-          const prices = data[1].value?.prices
-          const descriptions = data[2].value?.descriptions
-          populateProductDropdown(products, descriptions)
-          saveDataToAppState(products, prices, descriptions)
-          return
-        }
-        throw new Error('Missing product or price data')
-      })
-      .catch(err => {
-        const resultsContainer = document.querySelector('#results-container')
-        resultsContainer.insertAdjacentHTML('afterbegin', `<div class="alert alert-danger" role="alert">Oh no! Error fetching product data. Please try again later.</div>`)
-      })
+    try {
+      const data = await Promise.allSettled([fetchProductsPromise, fetchPricesPromise, fetchDescriptionsPromise])
+      if (data?.[0]?.status === 'fulfilled' && data?.[1]?.status === 'fulfilled') {
+        const products = data[0].value?.products
+        const prices = data[1].value?.prices
+        const descriptions = data[2].value?.descriptions
+        populateProductDropdown(products, descriptions)
+        saveDataToAppState(products, prices, descriptions)
+        return
+      }
+      throw new Error('Missing product or price data')
+    } catch (err) {
+      const resultsContainer = document.querySelector('#results-container')
+      resultsContainer.insertAdjacentHTML('afterbegin', `<div class="alert alert-danger" role="alert">Oh no! Error fetching product data. Please try again later.</div>`)
+    }
   }
 
   const populateProductDropdown = (products = [], descriptions = []) => {
